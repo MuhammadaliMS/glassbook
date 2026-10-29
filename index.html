@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glassbook</title>
+<meta name="description" content="Interactive textbooks that open on your desk: working glass and ceramic models rise out of the page.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500&family=Newsreader:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root { --paper: #f6f1e8; --ink: #1d1a16; --soft: #6b645a; --line: rgba(29, 26, 22, 0.1); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.55 Inter, system-ui, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 72px 24px 96px; }
+  .kicker { font: 600 13px/1 "Inter Tight", sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #b4452f; }
+  h1 { font: 700 clamp(48px, 8vw, 92px)/0.95 "Inter Tight", sans-serif; letter-spacing: -0.04em; margin: 18px 0 20px; }
+  h1 em { font: italic 400 1em/1 Newsreader, serif; letter-spacing: -0.02em; }
+  .lede { font-size: clamp(18px, 2.2vw, 21px); color: var(--soft); max-width: 620px; margin: 0 0 28px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 56px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 20px; border-radius: 999px; text-decoration: none; font: 500 15px/1 Inter, sans-serif; }
+  .btn.dark { background: var(--ink); color: #fff; }
+  .btn.light { border: 1px solid var(--line); color: var(--ink); background: #fffdf8; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+  .card { display: block; text-decoration: none; color: inherit; background: #fffdf8; border: 1px solid var(--line); border-radius: 22px; overflow: hidden;
+    transition: transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .25s; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 18px 50px rgba(60, 40, 20, .14); }
+  .card img { display: block; width: 100%; aspect-ratio: 9 / 13; object-fit: cover; background: #e8dcc6; }
+  .card div { padding: 16px 18px 18px; }
+  .card small { font: 600 12px/1 "Inter Tight", sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--soft); }
+  .card h2 { font: 600 21px/1.2 "Inter Tight", sans-serif; letter-spacing: -0.01em; margin: 8px 0 4px; }
+  .card p { margin: 0; font-size: 15px; color: var(--soft); }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 14px; color: var(--soft); }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Open source · three.js</div>
+  <h1>Glassbook<br><em>books you can touch</em></h1>
+  <p class="lede">An open textbook on your desk. The left page teaches; out of the right page rises a working glass and ceramic model of the idea. Drag it, tap it, and watch the numbers follow.</p>
+  <div class="row">
+    <a class="btn dark" href="book/?s=heart">Open the first book</a>
+    <a class="btn light" href="https://github.com/MuhammadaliMS/glassbook">Write your own →</a>
+  </div>
+  <section class="grid">
+    <a class="card" href="book/?s=heart"><img src="docs/heart.jpg" alt="A glass heart pump with red and blue blood on an open book"><div><small>Biology</small><h2>The double pump</h2><p>Set the pace and watch both sides of the heart push.</p></div></a>
+    <a class="card" href="book/?s=moon"><img src="docs/moon.jpg" alt="An orrery with a glowing lamp Sun, the Earth and the Moon on an open book"><div><small>Astronomy</small><h2>Why the Moon changes shape</h2><p>Swing the Moon round the Earth and watch its phase.</p></div></a>
+    <a class="card" href="book/?s=matter"><img src="docs/matter.jpg" alt="A glass cylinder of blue particles on a hot plate on an open book"><div><small>Chemistry</small><h2>Ice, water, steam</h2><p>Turn up the heat until the particles fly.</p></div></a>
+    <a class="card" href="book/?s=quake"><img src="docs/quake.jpg" alt="Layers of crust split by a glowing fault, and a seismograph, on an open book"><div><small>Earth science</small><h2>Where earthquakes come from</h2><p>Wind up a locked fault until it slips.</p></div></a>
+  </section>
+  <footer>Inspired by <a href="https://iamtechartist.github.io/every-joule-lesson1/">Every Joule</a> by Techartist. Pairs well with the <a href="https://github.com/wheresryan22/anatomy">Anatomy</a> and <a href="https://github.com/lucasmarkes/hairline">Hairline</a> Claude skills. MIT licence.</footer>
+</main>
+</body>
+</html>

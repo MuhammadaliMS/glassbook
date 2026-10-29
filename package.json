@@ -1,0 +1,14 @@
+{
+  "name": "glassbook",
+  "version": "0.1.0",
+  "description": "Interactive textbooks that open on your desk: working glass and ceramic three.js models rise out of the page.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "look": "node tools/look.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.50.0"
+  }
+}

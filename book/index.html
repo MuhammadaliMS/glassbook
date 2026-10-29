@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glassbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=Inter:wght@400;500&family=Newsreader:ital,wght@0,500;1,400&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #d9c7a9; overflow: hidden; font-family: Inter, system-ui, sans-serif; }
+  canvas { display: block; touch-action: none; }
+  nav { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); display: flex; gap: 4px; padding: 5px;
+    background: rgba(255, 252, 246, 0.72); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 999px; box-shadow: 0 10px 40px rgba(60, 40, 20, 0.18); }
+  nav a { font: 500 14px/1 Inter, sans-serif; color: #2a2620; text-decoration: none; padding: 10px 16px; border-radius: 999px; white-space: nowrap; }
+  nav a:hover { background: rgba(0, 0, 0, 0.05); }
+  nav a[aria-current] { background: #1f1c18; color: #fff; }
+  nav a.home { color: #6b645a; }
+  @media (max-width: 520px) { nav a { padding: 9px 11px; font-size: 13px; } nav a.home { display: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<nav id="nav">
+  <a class="home" href="../">Glassbook</a>
+  <a href="?s=heart">Heart</a><a href="?s=moon">Moon</a><a href="?s=matter">Matter</a><a href="?s=quake">Quake</a>
+</nav>
+<script type="module">
+  import { createBook } from './engine.js';
+  const q = new URLSearchParams(location.search);
+  const name = q.get('s') ?? 'heart';
+  for (const a of document.querySelectorAll('nav a')) if (a.getAttribute('href') === `?s=${name}`) a.setAttribute('aria-current', 'page');
+  const subject = (await import(`./subjects/${name}.js`)).default;
+  const filming = q.has('w');
+  if (filming) document.getElementById('nav').remove();
+  const w = Number(q.get('w')) || innerWidth, h = Number(q.get('h')) || innerHeight;
+  const book = await createBook(subject, { width: w, height: h, dpr: Number(q.get('dpr')) || undefined, intro: !filming });
+  // a wide window sees the whole spread; a tall one leans in on the model
+  const frame = () => { if (innerWidth > innerHeight * 1.1) book.setCamera({ x: 2, z: 2, dist: 74, el: 54, az: -10 }); else book.setCamera({}); };
+  if (!filming) { frame(); addEventListener('resize', () => { book.resize(innerWidth, innerHeight); frame(); }); }
+  window.__ready = true;
+</script>
+</body>
+</html>
