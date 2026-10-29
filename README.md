@@ -8,6 +8,8 @@ event (a beat, a whole month, a fault slipping), and watch the live readout foll
 
 ![Four Glassbook pages: the heart, the Moon, states of matter and an earthquake fault](docs/hero.jpg)
 
+**Try it live: [zerowing.in/glassbook](https://zerowing.in/glassbook)**
+
 Plain three.js and ES modules. No build step, no framework, nothing to install to run it.
 
 ## Run it

@@ -2,3 +2,7 @@ node_modules
 *.mp4
 .DS_Store
 probe/
+deploy/
+.deploy/
+.wrangler/
+.wrangler-home/
