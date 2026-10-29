@@ -1,6 +1,6 @@
 # Glassbook
 
-**Interactive textbooks that open on your desk.** An open hardcover lies on an oak desk in window
+**Interactive textbooks that open on your desk.** An open hardcover lies on a marble desk in window
 light. The left page teaches; out of the right page rises a working glass, ceramic and aluminium
 model of the idea, one you can push and play with. Drag across it to change the one thing that
 matters (a heart rate, the Moon's orbit, the heat under a cylinder of water), tap it for the one
@@ -27,7 +27,7 @@ Open http://localhost:8000 and pick a book. Any static server works (`npx serve`
 | `matter` · Chemistry: *Ice, water, steam* | burner heat, -20 to 140 °C | cools it back to ice | `25 °C · liquid` |
 | `quake` · Earth science: *Where earthquakes come from* | winds the crank on a locked fault | forces a slip | `slip! · M 5.1` |
 
-Open a book directly with `book/?s=<name>`. Arrow keys drive it too; Space or Enter fires the tap.
+Open a book directly with `book/?s=<name>`, and pick the desk with `&look=marble` (default), `ash`, `studio` or `oak`. Arrow keys drive it too; Space or Enter fires the tap.
 
 ## Write a book about anything
 
@@ -68,7 +68,7 @@ What the engine gives a subject:
 - **Shapes** `smoothShape(points)` makes a smooth closed outline, `slab(shape, depth, bevel)` extrudes
   it up off the page, `roundedRect(w, h, r)`, `curve(points)` for tubes, and `flowTexture(color)`, a
   stripe you scroll along a liquid tube so it reads as flow.
-- **The book**: the desk, the window light with blind shadows, props, the cover, the page text set
+- **The book**: the desk (four looks: marble, ash, studio, oak), the window light with blind shadows, props, the cover, the page text set
   from `page`, the gutter, the opening and the model rising out of the page.
 - **Control**: pointer and keyboard drive `u` with a spring; `book.drive(u)`, `book.snap(u)`,
   `book.action()`, `book.pose({ open, rise })` and `book.setCamera({...})` script it from outside.

@@ -36,7 +36,7 @@ const page = await browser.newPage({ viewport: { width: W, height: H }, deviceSc
 page.on('pageerror', (e) => console.error('page:', e.message));
 page.on('console', (m) => { if (m.type() === 'error') console.error('console:', m.text()); });
 await page.addInitScript(virtualClock);
-await page.goto(`http://localhost:${port}/book/index.html?s=${subject}&w=${W}&h=${H}&dpr=1`);
+await page.goto(`http://localhost:${port}/book/index.html?s=${subject}&w=${W}&h=${H}&dpr=1&look=${flag("look", "")}`);
 await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000, polling: 200 });
 await page.evaluate(({ cam, pose, u, js }) => {
   if (cam) window.book.setCamera(JSON.parse(cam));

@@ -1,4 +1,4 @@
-// Interactive book engine: an open hardcover on an oak desk in window light, a text page on the
+// Interactive book engine: an open hardcover on a desk in window light, a text page on the
 // left and a working glass-and-ceramic model rising out of the right page.
 // A subject module supplies the page text and builds the model (see subjects/heart.js).
 // Motion runs on requestAnimationFrame + performance.now only, so the capture can step a virtual clock.
@@ -187,11 +187,19 @@ function pageBlock(side, topTex, edgeTex) {
   return grp;
 }
 
+// ---------- looks: the desk and the light it sits in ----------
+const LOOKS = {
+  oak: { desk: 'desk-oak.jpg', repeat: 2.2, rough: 0.55, bg: 0xd9c7a9, sun: [0xffeccc, 3.3], spot: [0xffe2b8, 70], hemi: [0xf4f1ff, 0xb08a60, 0.3], env: 0.38, exposure: 0.95, vignette: 0.55, warm: 0.6 },
+  marble: { desk: 'desk-marble.jpg', repeat: 1.3, rough: 0.22, tint: 0xe9e8e5, bg: 0xe9e8e5, sun: [0xfff8ef, 2.5], spot: [0xfff6ea, 30], hemi: [0xf7f9ff, 0xcfcdc9, 0.35], env: 0.42, exposure: 0.95, vignette: 0.3, warm: 0, bloom: 1.9 },
+  ash: { desk: 'desk-ash.jpg', repeat: 2.0, rough: 0.6, tint: 0xe6e4e0, bg: 0xe6e4e0, sun: [0xfff8ef, 2.5], spot: [0xfff6ea, 30], hemi: [0xf7f9ff, 0xcfcdc9, 0.35], env: 0.42, exposure: 0.95, vignette: 0.3, warm: 0, bloom: 1.9 },
+  studio: { desk: null, color: 0xc9c7c3, rough: 0.8, bg: 0xc9c7c3, sun: [0xfffaf3, 2.5], spot: [0xffffff, 25], hemi: [0xf7f9ff, 0xbdbbb7, 0.35], env: 0.42, exposure: 0.95, vignette: 0.3, warm: 0, bloom: 1.9 },
+};
+
 // ---------- desk props: a plant, a pencil cup and a mug, kept to the edges ----------
 function addProps(scene) {
   const sh = (m) => { m.castShadow = true; m.receiveShadow = true; return m; };
   // plant: ceramic pot + glossy leaves
-  const plant = new THREE.Group(); plant.position.set(-24, 0, -24); scene.add(plant);
+  const plant = new THREE.Group(); plant.position.set(-46, 0, -40); scene.add(plant);
   const pot = sh(new THREE.Mesh(new THREE.CylinderGeometry(3.2, 2.6, 5.2, 48), M.ceramic({ color: 0xf1eee8 })));
   pot.position.y = 2.6; plant.add(pot);
   const soil = new THREE.Mesh(new THREE.CylinderGeometry(2.95, 2.95, 0.2, 40), new THREE.MeshStandardMaterial({ color: 0x3b2a1e, roughness: 1 }));
@@ -232,27 +240,32 @@ export async function createBook(subject, opts = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
   renderer.setPixelRatio(opts.dpr ?? Math.min(devicePixelRatio, 2));
   renderer.setSize(W, H);
-  renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = 0.95;
+  renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   document.body.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xd9c7a9);
+  const L = LOOKS[opts.look] ?? LOOKS.marble;
+  scene.background = new THREE.Color(L.bg);
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.03).texture;
-  scene.environmentIntensity = 0.38;
+  scene.environmentIntensity = L.env;
 
   const camera = new THREE.PerspectiveCamera(30, W / H, 1, 500);
 
   // desk
-  const deskTex = await new THREE.TextureLoader().loadAsync(new URL('./assets/desk-oak.jpg', import.meta.url).href);
-  deskTex.colorSpace = THREE.SRGBColorSpace; deskTex.wrapS = deskTex.wrapT = THREE.RepeatWrapping; deskTex.repeat.set(2.2, 2.2); deskTex.anisotropy = 8;
-  const desk = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), new THREE.MeshStandardMaterial({ map: deskTex, roughness: 0.55, envMapIntensity: 0.4 }));
+  renderer.toneMappingExposure = L.exposure;
+  let deskTex = null;
+  if (L.desk) {
+    deskTex = await new THREE.TextureLoader().loadAsync(new URL(`./assets/${L.desk}`, import.meta.url).href);
+    deskTex.colorSpace = THREE.SRGBColorSpace; deskTex.wrapS = deskTex.wrapT = THREE.RepeatWrapping; deskTex.repeat.set(L.repeat, L.repeat); deskTex.anisotropy = 8;
+  }
+  const desk = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), new THREE.MeshPhysicalMaterial({ map: deskTex, color: L.color ?? L.tint ?? 0xffffff, roughness: L.rough, clearcoat: L.rough < 0.3 ? 0.6 : 0, clearcoatRoughness: 0.2, envMapIntensity: 0.4 }));
   desk.rotation.x = -Math.PI / 2; desk.receiveShadow = true;
   scene.add(desk);
 
   // light: warm low sun through a window (blind stripes from a spot cookie) + sky fill
-  const sun = new THREE.DirectionalLight(0xffeccc, 3.3);
+  const sun = new THREE.DirectionalLight(...L.sun);
   sun.position.set(-40, 55, -30); sun.castShadow = true;
   sun.shadow.mapSize.set(4096, 4096); sun.shadow.camera.left = -40; sun.shadow.camera.right = 40; sun.shadow.camera.top = 40; sun.shadow.camera.bottom = -40;
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03; sun.shadow.radius = 6;
@@ -264,10 +277,10 @@ export async function createBook(subject, opts = {}) {
     for (let i = 0; i < 4; i++) { g.fillStyle = v; g.fillRect(40 + i * 112, 0, 70, 512); }
     const t = new THREE.CanvasTexture(c); return t;
   })();
-  const window_ = new THREE.SpotLight(0xffe2b8, 70, 0, 0.5, 0.6, 1.6);
+  const window_ = new THREE.SpotLight(L.spot[0], L.spot[1], 0, 0.5, 0.6, 1.6);
   window_.position.set(-60, 75, -40); window_.target.position.set(-4, 0, 8); window_.map = cookie; window_.castShadow = false;
   scene.add(window_, window_.target);
-  scene.add(new THREE.HemisphereLight(0xf4f1ff, 0xb08a60, 0.3));
+  scene.add(new THREE.HemisphereLight(...L.hemi));
 
   if (opts.props !== false) addProps(scene);
 
@@ -307,16 +320,16 @@ export async function createBook(subject, opts = {}) {
   // post
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.22, 0.3, 1.25);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.22, 0.3, L.bloom ?? 1.25);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
   const vignette = new ShaderPass({
-    uniforms: { tDiffuse: { value: null }, amount: { value: 0.55 } },
+    uniforms: { tDiffuse: { value: null }, amount: { value: L.vignette }, warm: { value: L.warm } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-    fragmentShader: `uniform sampler2D tDiffuse; uniform float amount; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float amount; uniform float warm; varying vec2 vUv;
       void main(){ vec4 c = texture2D(tDiffuse, vUv); vec2 d = (vUv - 0.5) * vec2(1.0, 1.25);
         float v = smoothstep(0.85, 0.2, length(d)); c.rgb *= mix(1.0 - amount, 1.0, v);
-        c.rgb = mix(c.rgb, c.rgb * vec3(1.03, 1.0, 0.95), 0.6); gl_FragColor = c; }`,
+        c.rgb = mix(c.rgb, c.rgb * vec3(1.03, 1.0, 0.95), warm); gl_FragColor = c; }`,
   });
   composer.addPass(vignette);
 
